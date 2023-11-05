@@ -3,10 +3,10 @@ using UnityEngine;
 [System.Serializable]
 public struct MeshData
 {
-    public Mesh mesh;
     public Vector3[] vertices;
+    public Vector3[] norms;
     public int[] indices;
-    public Color[] color;
+    public Color[] colors;
     public int arraySize;
 
     public bool Initialized { get; private set; }
@@ -15,18 +15,13 @@ public struct MeshData
     {
         int maxTris = WorldSettings.ContainerSize * WorldSettings.MaxHeight * WorldSettings.ContainerSize / 4;
         arraySize = maxTris * 3;
-        mesh = new Mesh();
-
-        indices = new int[arraySize];
-        vertices = new Vector3[arraySize];
-        color = new Color[arraySize];
     }
 
-    public void ClearData()
+    public void ClearArrays()
     {
-        //Completely clear the mesh reference to help prevent memory problems
-        mesh.Clear();
-        Object.Destroy(mesh);
-        mesh = null;
+        indices = null;
+        vertices = null;
+        norms = null;
+        colors = null;
     }
 }

@@ -62,13 +62,27 @@ public class ComputeManager : Singleton<ComputeManager>
         VoxelColor32[] converted = new VoxelColor32[WorldManager.Instance.WorldColors.Length];
         int cCount = 0;
 
-        foreach (VoxelColor c in WorldManager.Instance.WorldColors)
+        if(WorldSettings.UseTextures)
         {
-            VoxelColor32 b = new VoxelColor32();
-            b.color = ColorfTo32(c.color);
-            b.smoothness = c.smoothness;
-            b.metallic = c.metallic;
-            converted[cCount++] = b;
+            foreach (VoxelTexture c in WorldManager.Instance.VoxelTextures)
+            {
+                VoxelColor32 b = new VoxelColor32();
+                b.color = 0;
+                b.smoothness = c.smoothness;
+                b.metallic = c.metallic;
+                converted[cCount++] = b;
+            }
+        }
+        else
+        {
+            foreach (VoxelColor c in WorldManager.Instance.WorldColors)
+            {
+                VoxelColor32 b = new VoxelColor32();
+                b.color = ColorfTo32(c.color);
+                b.smoothness = c.smoothness;
+                b.metallic = c.metallic;
+                converted[cCount++] = b;
+            }
         }
 
         voxelColorsArray = new ComputeBuffer(converted.Length, 12);
@@ -77,6 +91,8 @@ public class ComputeManager : Singleton<ComputeManager>
         voxelShader.SetBuffer(0, "voxelColors", voxelColorsArray);
         voxelShader.SetInt("containerSizeX", WorldSettings.ContainerSize);
         voxelShader.SetInt("containerSizeY", WorldSettings.MaxHeight);
+        voxelShader.SetBool("sharedVertices", WorldSettings.SharedVertices);
+        voxelShader.SetBool("useTextures", WorldSettings.UseTextures);
 
         for (int i = 0; i < count; i++)
         {
@@ -85,7 +101,7 @@ public class ComputeManager : Singleton<ComputeManager>
         }
     }
 
-    public void GenerateVoxelData(Container cont, Vector3 pos)
+    public void GenerateVoxelData(Chunk cont, Vector3 pos)
     {
 
         NoiseBuffer noiseBuffer = GetNoiseBuffer();
@@ -107,15 +123,16 @@ public class ComputeManager : Singleton<ComputeManager>
         voxelShader.SetBuffer(0, "voxelArray", noiseBuffer.noiseBuffer);
         voxelShader.SetBuffer(0, "counter", meshBuffer.countBuffer);
         voxelShader.SetBuffer(0, "vertexBuffer", meshBuffer.vertexBuffer);
+        voxelShader.SetBuffer(0, "normalBuffer", meshBuffer.normalBuffer);
         voxelShader.SetBuffer(0, "colorBuffer", meshBuffer.colorBuffer);
         voxelShader.SetBuffer(0, "indexBuffer", meshBuffer.indexBuffer);
         voxelShader.Dispatch(0, xThreads, yThreads, xThreads);
 
         AsyncGPUReadback.Request(meshBuffer.countBuffer, (callback) =>
         {
-            if (WorldManager.Instance.activeContainers.ContainsKey(pos))
+            if (WorldManager.Instance.activeChunks.ContainsKey(pos))
             {
-                WorldManager.Instance.activeContainers[pos].UploadMesh(meshBuffer);
+                WorldManager.Instance.activeChunks[pos].UploadMesh(meshBuffer);
             }
             ClearAndRequeueBuffer(noiseBuffer);
             ClearAndRequeueBuffer(meshBuffer);
