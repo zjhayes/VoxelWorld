@@ -40,19 +40,19 @@ public class ComputeManager : Singleton<ComputeManager>
 
     public void Initialize(int count = 18)
     {
-        xThreads = WorldSettings.ContainerSize / 8 + 1;
-        yThreads = WorldSettings.MaxHeight / 8;
+        xThreads = WorldManager.Instance.Settings.ChunkSize / 8 + 1;
+        yThreads = WorldManager.Instance.Settings.MaxHeight / 8;
 
         noiseLayersArray = new ComputeBuffer(noiseLayers.Length, 36);
         noiseLayersArray.SetData(noiseLayers);
 
-        noiseShader.SetInt("containerSizeX", WorldSettings.ContainerSize);
-        noiseShader.SetInt("containerSizeY", WorldSettings.MaxHeight);
+        noiseShader.SetInt("containerSizeX", WorldManager.Instance.Settings.ChunkSize);
+        noiseShader.SetInt("containerSizeY", WorldManager.Instance.Settings.MaxHeight);
 
         noiseShader.SetBool("generateCaves", true);
         noiseShader.SetBool("forceFloor", true);
 
-        noiseShader.SetInt("maxHeight", WorldSettings.MaxHeight);
+        noiseShader.SetInt("maxHeight", WorldManager.Instance.Settings.MaxHeight);
         noiseShader.SetInt("oceanHeight", 42);
         noiseShader.SetInt("seed", seed);
 
@@ -62,7 +62,7 @@ public class ComputeManager : Singleton<ComputeManager>
         VoxelColor32[] converted = new VoxelColor32[WorldManager.Instance.WorldColors.Length];
         int cCount = 0;
 
-        if(WorldSettings.UseTextures)
+        if(WorldManager.Instance.Settings.UseTextures)
         {
             foreach (VoxelTexture c in WorldManager.Instance.VoxelTextures)
             {
@@ -89,10 +89,10 @@ public class ComputeManager : Singleton<ComputeManager>
         voxelColorsArray.SetData(converted);
 
         voxelShader.SetBuffer(0, "voxelColors", voxelColorsArray);
-        voxelShader.SetInt("containerSizeX", WorldSettings.ContainerSize);
-        voxelShader.SetInt("containerSizeY", WorldSettings.MaxHeight);
-        voxelShader.SetBool("sharedVertices", WorldSettings.SharedVertices);
-        voxelShader.SetBool("useTextures", WorldSettings.UseTextures);
+        voxelShader.SetInt("containerSizeX", WorldManager.Instance.Settings.ChunkSize);
+        voxelShader.SetInt("containerSizeY", WorldManager.Instance.Settings.MaxHeight);
+        voxelShader.SetBool("sharedVertices", WorldManager.Instance.Settings.SharedVertices);
+        voxelShader.SetBool("useTextures", WorldManager.Instance.Settings.UseTextures);
 
         for (int i = 0; i < count; i++)
         {

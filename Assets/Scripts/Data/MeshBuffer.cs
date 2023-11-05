@@ -19,9 +19,9 @@ public struct MeshBuffer
         countBuffer.SetCounterValue(0);
         countBuffer.SetData(new uint[] { 0, 0 });
 
-        int maxTris = WorldSettings.ContainerSize * WorldSettings.MaxHeight * WorldSettings.ContainerSize / 4;
-        int maxVertices = WorldSettings.SharedVertices ? maxTris / 3 : maxTris;
-        int maxNormals = WorldSettings.SharedVertices ? maxVertices * 3 : 1;
+        int maxTris = WorldManager.Instance.Settings.ChunkSize * WorldManager.Instance.Settings.MaxHeight * WorldManager.Instance.Settings.ChunkSize / 4;
+        int maxVertices = WorldManager.Instance.Settings.SharedVertices ? maxTris / 3 : maxTris;
+        int maxNormals = WorldManager.Instance.Settings.SharedVertices ? maxVertices * 3 : 1;
         //width*height*width*faces*tris
 
         vertexBuffer ??= new ComputeBuffer(maxVertices * 3, 12);

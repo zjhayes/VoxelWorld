@@ -466,7 +466,21 @@ MonoBehaviour:
       rgba: 1131377
     metallic: 0.7
     smoothness: 0.1
+  voxelTextures:
+  - texture: {fileID: 2800000, guid: 3cf543484d2fb7347b203b934a632fa6, type: 3}
+    smoothness: 0.5
+    metallic: 0.1
+  - texture: {fileID: 2800000, guid: 66bfffbfc1446e24dbf6081d20fc9daa, type: 3}
+    smoothness: 0.2
+    metallic: 0.7
   mainCamera: {fileID: 330585546}
+  settings:
+    ChunkSize: 16
+    MaxHeight: 256
+    RenderDistance: 32
+    SharedVertices: 0
+    UseTextures: 1
+  allMeshData: []
   maxChunksToProcessPerFrame: 6
 --- !u!4 &1398206713
 Transform:

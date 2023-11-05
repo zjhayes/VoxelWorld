@@ -17,7 +17,7 @@ public class IndexedArray<T> where T : struct
 
     public IndexedArray()
     {
-        Create(WorldSettings.ContainerSize, WorldSettings.MaxHeight);
+        Create(WorldManager.Instance.Settings.ChunkSize, WorldManager.Instance.Settings.MaxHeight);
     }
 
     public IndexedArray(int sizeX, int sizeY)

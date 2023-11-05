@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -18,6 +17,8 @@ public class WorldManager : Singleton<WorldManager>
     private VoxelTexture[] voxelTextures;
     [SerializeField]
     private Transform mainCamera;
+    [SerializeField]
+    private WorldSettings settings;
 
     private Vector3 lastUpdatedPosition;
     private Vector3 previouslyCheckedPosition;
@@ -38,6 +39,7 @@ public class WorldManager : Singleton<WorldManager>
     private bool performedFirstPass = false;
 
     public VoxelTexture[] VoxelTextures { get { return voxelTextures; } }
+    public WorldSettings Settings { get { return settings; } }
 
     // Start is called before the first frame update
     private void Start()
@@ -47,14 +49,14 @@ public class WorldManager : Singleton<WorldManager>
 
     private void InitializeWorld()
     {
-        int renderSizePlusExcess = WorldSettings.RenderDistance + 3;
+        int renderSizePlusExcess = settings.RenderDistance + 3;
         int totalContainers = renderSizePlusExcess * renderSizePlusExcess;
 
         ComputeManager.Instance.Initialize(maxChunksToProcessPerFrame * 3);
 
-        if (worldMaterial.shader.name.Contains("tex") && voxelTextures.Length > 0)
+        if (worldMaterial.shader.name.Contains("Tex") && voxelTextures.Length > 0)
         {
-            Debug.Log("Tryingg to use Textures!");
+            Debug.Log("Trying to use Textures!");
             worldMaterial.SetTexture("_TextureArray", GenerateTextureArray());
         }
 
@@ -112,12 +114,12 @@ public class WorldManager : Singleton<WorldManager>
     private void CheckActiveChunksLoop()
     {
         Profiler.BeginThreadProfiling("Chunks", "ChunkChecker");
-        int halfRenderSize = WorldSettings.RenderDistance / 2;
-        int renderDistPlus1 = WorldSettings.RenderDistance + 1;
+        int halfRenderSize = settings.RenderDistance / 2;
+        int renderDistPlus1 = settings.RenderDistance + 1;
         Vector3 pos = Vector3.zero;
 
         Bounds chunkBounds = new Bounds();
-        chunkBounds.size = new Vector3(renderDistPlus1 * WorldSettings.ContainerSize, 1, renderDistPlus1 * WorldSettings.ContainerSize);
+        chunkBounds.size = new Vector3(renderDistPlus1 * settings.ChunkSize, 1, renderDistPlus1 * settings.ChunkSize);
         while (true && !killThreads)
         {
             if (previouslyCheckedPosition != lastUpdatedPosition || !performedFirstPass)
@@ -127,8 +129,8 @@ public class WorldManager : Singleton<WorldManager>
                 for (int x = -halfRenderSize; x < halfRenderSize; x++)
                     for (int z = -halfRenderSize; z < halfRenderSize; z++)
                     {
-                        pos.x = x * WorldSettings.ContainerSize + previouslyCheckedPosition.x;
-                        pos.z = z * WorldSettings.ContainerSize + previouslyCheckedPosition.z;
+                        pos.x = x * settings.ChunkSize + previouslyCheckedPosition.x;
+                        pos.z = z * settings.ChunkSize + previouslyCheckedPosition.z;
 
                         if (!activeChunks.ContainsKey(pos))
                         {
@@ -242,10 +244,10 @@ public class WorldManager : Singleton<WorldManager>
 
     #endregion
 
-    public static Vector3 PositionToChunkCoord(Vector3 pos)
+    public Vector3 PositionToChunkCoord(Vector3 pos)
     {
-        pos /= WorldSettings.ContainerSize;
-        pos = math.floor(pos) * WorldSettings.ContainerSize;
+        pos /= settings.ChunkSize;
+        pos = math.floor(pos) * settings.ChunkSize;
         pos.y = 0;
         return pos;
     }

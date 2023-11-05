@@ -1,14 +1,14 @@
 [System.Serializable]
 public class WorldSettings
 {
-    public static readonly int ContainerSize = 16;
-    public static readonly int MaxHeight = 256;
-    public static readonly int RenderDistance = 32;
-    public static readonly bool SharedVertices = false;
-    public static readonly bool UseTextures = false;
+    public int ChunkSize = 16;
+    public int MaxHeight = 256;
+    public int RenderDistance = 32;
+    public bool SharedVertices = false;
+    public bool UseTextures = true;
 
-    public static int ChunkCount
+    public int ChunkCount
     {
-        get { return (ContainerSize + 3) * (MaxHeight + 1) * (ContainerSize + 3); }
+        get { return (ChunkSize + 3) * (MaxHeight + 1) * (ChunkSize + 3); }
     }
 }

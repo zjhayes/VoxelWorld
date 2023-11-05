@@ -50,13 +50,13 @@ public class Chunk : MonoBehaviour
         meshBuffer.indexBuffer.GetData(meshData.indices, 0, 0, faceCount[1]);
         meshBuffer.colorBuffer.GetData(meshData.colors, 0, 0, faceCount[0]);
 
-        if (WorldSettings.SharedVertices)
+        if (WorldManager.Instance.Settings.SharedVertices)
             meshBuffer.normalBuffer.GetData(meshData.norms, 0, 0, faceCount[0]);
 
         //Assign the mesh
         mesh = new Mesh();
 
-        if (WorldSettings.SharedVertices)
+        if (WorldManager.Instance.Settings.SharedVertices)
             mesh.SetNormals(meshData.norms, 0, faceCount[0]);
 
         mesh.SetVertices(meshData.vertices, 0, faceCount[0]);

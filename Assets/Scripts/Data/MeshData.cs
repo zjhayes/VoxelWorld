@@ -13,7 +13,7 @@ public struct MeshData
 
     public void Initialize()
     {
-        int maxTris = WorldSettings.ContainerSize * WorldSettings.MaxHeight * WorldSettings.ContainerSize / 4;
+        int maxTris = WorldManager.Instance.Settings.ChunkSize * WorldManager.Instance.Settings.MaxHeight * WorldManager.Instance.Settings.ChunkSize / 4;
         arraySize = maxTris * 3;
     }
 
